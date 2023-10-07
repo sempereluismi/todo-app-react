@@ -1,10 +1,18 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
+import { FilterTodos } from "./components/FilterTodos.jsx";
 import { TodoList } from "./components/TodoList.jsx";
 import { WriteTodo } from "./components/WriteTodo.jsx";
+import { TODOS_RENDER_OPTIONS } from "./constants/constants.js";
 
 function App() {
-  const [todos, setTodos] = useState(Array());
+  const [allTodos, setAllTodos] = useState(Array());
+  const [todosToRender, setTodosToRender] = useState(Array());
   const [todoID, setTodoID] = useState(0);
+
+  useEffect(() => {
+    changeTodosToRender("ALL");
+  }, [allTodos]);
 
   const addTodo = (todoText) => {
     if (todoText === "") return;
@@ -15,42 +23,63 @@ function App() {
       finished: false,
     };
 
-    const newTodos = [todo, ...todos];
+    const newTodos = [todo, ...allTodos];
 
-    setTodos(newTodos);
+    setAllTodos(newTodos);
 
     const newTodoID = todoID + 1;
     setTodoID(newTodoID);
   };
 
   const changeTodoFinshed = (id) => {
-    let todoToChange = todos.find((todo) => todo.id === id);
+    let todoToChange = allTodos.find((todo) => todo.id === id);
     todoToChange.finished = !todoToChange.finished;
 
     const getTodoToChangeIndex = (todo) => todo.id === id;
 
-    const todoToChangeIndex = todos.findIndex(getTodoToChangeIndex);
-    const newTodos = [...todos];
+    const todoToChangeIndex = allTodos.findIndex(getTodoToChangeIndex);
+    const newTodos = [...allTodos];
 
     newTodos[todoToChangeIndex] = {
       id,
       text: todoToChange.text,
       finished: todoToChange.finished,
     };
-    setTodos(newTodos);
+    setAllTodos(newTodos);
   };
 
   const deleteTodo = (id) => {
-    const newTodos = todos.filter((todo) => {
+    const newTodos = allTodos.filter((todo) => {
       return todo.id !== id;
     });
 
-    setTodos(newTodos);
+    setAllTodos(newTodos);
   };
 
   const deleteAllTodos = () => {
     const newTodos = [];
-    setTodos(newTodos);
+    setAllTodos(newTodos);
+  };
+
+  const changeTodosToRender = (todosToRender) => {
+    if (!TODOS_RENDER_OPTIONS.includes(todosToRender)) return;
+    if (todosToRender === "FINISHED") {
+      const pendingTodos = allTodos.filter((todo) => {
+        return todo.finished === true;
+      });
+
+      setTodosToRender(pendingTodos);
+    }
+    if (todosToRender === "PENDING") {
+      const pendingTodos = allTodos.filter((todo) => {
+        return todo.finished === false;
+      });
+
+      setTodosToRender(pendingTodos);
+    }
+    if (todosToRender === "ALL") {
+      setTodosToRender(allTodos);
+    }
   };
 
   return (
@@ -63,8 +92,9 @@ function App() {
 
       <main className="w-2/5 mx-auto">
         <WriteTodo addTodo={addTodo} />
+        <FilterTodos changeTodosToRender={changeTodosToRender} />
         <TodoList
-          todos={todos}
+          todos={todosToRender}
           changeTodoFinshed={changeTodoFinshed}
           deleteTodo={deleteTodo}
           deleteAllTodos={deleteAllTodos}

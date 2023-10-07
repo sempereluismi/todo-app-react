@@ -1,0 +1,1 @@
+export const TODOS_RENDER_OPTIONS = ['ALL', 'PENDING', 'FINISHED']
