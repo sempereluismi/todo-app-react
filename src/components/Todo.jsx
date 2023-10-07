@@ -13,7 +13,10 @@ export const Todo = ({ todo, changeTodoFinshed, deleteTodo }) => {
   };
 
   return (
-    <li className="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+    <li
+      className="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600"
+      onClick={onHandleChange}
+    >
       <div className="flex items-center pl-3">
         <input
           checked={todo.finished}

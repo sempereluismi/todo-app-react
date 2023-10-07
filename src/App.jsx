@@ -3,15 +3,21 @@ import { useEffect, useState } from "react";
 import { FilterTodos } from "./components/FilterTodos.jsx";
 import { TodoList } from "./components/TodoList.jsx";
 import { WriteTodo } from "./components/WriteTodo.jsx";
-import { TODOS_RENDER_OPTIONS } from "./constants/constants.js";
 
 function App() {
   const [allTodos, setAllTodos] = useState(Array());
   const [todosToRender, setTodosToRender] = useState(Array());
   const [todoID, setTodoID] = useState(0);
+  const [todoFilterValue, setTodoFilterValue] = useState("ALL");
+
+  const filterOptions = {
+    FINISHED: (todos) => todos.filter((todo) => todo.finished === true),
+    PENDING: (todos) => todos.filter((todo) => todo.finished === false),
+    ALL: (todos) => todos,
+  };
 
   useEffect(() => {
-    changeTodosToRender("ALL");
+    changeTodosToRender(todoFilterValue);
   }, [allTodos]);
 
   const addTodo = (todoText) => {
@@ -56,30 +62,18 @@ function App() {
     setAllTodos(newTodos);
   };
 
-  const deleteAllTodos = () => {
-    const newTodos = [];
+  const deleteTodos = (filterValue) => {
+    const newTodos =
+      filterValue === "FINISHED"
+        ? filterOptions["PENDING"](allTodos)
+        : filterOptions[filterValue](allTodos);
     setAllTodos(newTodos);
   };
 
-  const changeTodosToRender = (todosToRender) => {
-    if (!TODOS_RENDER_OPTIONS.includes(todosToRender)) return;
-    if (todosToRender === "FINISHED") {
-      const pendingTodos = allTodos.filter((todo) => {
-        return todo.finished === true;
-      });
-
-      setTodosToRender(pendingTodos);
-    }
-    if (todosToRender === "PENDING") {
-      const pendingTodos = allTodos.filter((todo) => {
-        return todo.finished === false;
-      });
-
-      setTodosToRender(pendingTodos);
-    }
-    if (todosToRender === "ALL") {
-      setTodosToRender(allTodos);
-    }
+  const changeTodosToRender = (filterValue) => {
+    const filteredTodos = filterOptions[filterValue](allTodos);
+    setTodosToRender(filteredTodos);
+    setTodoFilterValue(filterValue);
   };
 
   return (
@@ -92,12 +86,16 @@ function App() {
 
       <main className="w-2/5 mx-auto">
         <WriteTodo addTodo={addTodo} />
-        <FilterTodos changeTodosToRender={changeTodosToRender} />
+        <FilterTodos
+          changeTodosToRender={changeTodosToRender}
+          todoFilterValue={todoFilterValue}
+        />
         <TodoList
           todos={todosToRender}
           changeTodoFinshed={changeTodoFinshed}
           deleteTodo={deleteTodo}
-          deleteAllTodos={deleteAllTodos}
+          deleteAllTodos={deleteTodos}
+          todoFilterValue={todoFilterValue}
         />
       </main>
     </section>
