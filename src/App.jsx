@@ -63,11 +63,17 @@ function App() {
   };
 
   const deleteTodos = (filterValue) => {
-    const newTodos =
+
+    if(filterValue === "ALL") {
+      const newTodos = []
+      setAllTodos(newTodos);
+    } else {
+      const newTodos =
       filterValue === "FINISHED"
         ? filterOptions["PENDING"](allTodos)
         : filterOptions[filterValue](allTodos);
-    setAllTodos(newTodos);
+      setAllTodos(newTodos);
+    }
   };
 
   const changeTodosToRender = (filterValue) => {

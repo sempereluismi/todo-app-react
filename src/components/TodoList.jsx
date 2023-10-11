@@ -27,7 +27,7 @@ export const TodoList = ({
         )}
         {todos.length === 0 && (
           <h2 className="h-full flex items-center justify-center text-3xl">
-            THERE ARE NO {todoFilterValue} TASK
+            THERE ARE NO {(todoFilterValue === "ALL" ? "" : todoFilterValue)} TASK
           </h2>
         )}
       </section>
