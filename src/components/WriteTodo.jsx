@@ -1,10 +1,16 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { useTodos } from "../hooks/useTodos";
 
-export const WriteTodo = ({ addTodo }) => {
+export const WriteTodo = () => {
+
+  const { addTodo } = useTodos()
+
   const [todoText, setTodoText] = useState("");
   const handleInputChange = (event) => {
-    setTodoText(event.target.value);
+    const newText = event.target.value
+    if(newText[0] === " ") return
+    setTodoText(newText);
   };
 
   const handleSubmit = (event) => {
