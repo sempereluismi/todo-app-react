@@ -43,7 +43,7 @@ export function useTodos () {
       const newTodos =
       todoFilterValue === 'FINISHED'
         ? FILTER_OPTIONS.PENDING(todos)
-        : FILTER_OPTIONS[todoFilterValue](todos)
+        : FILTER_OPTIONS.FINISHED(todos)
       setTodos(newTodos)
     }
   }
